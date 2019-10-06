@@ -120,26 +120,26 @@ server.listen(app.get('port'), function(){
     <title>/public/counter.html</title>
 </head>
 <body>
-    <h1>Hello World</h1>
+    <h1>Hello world</h1>
     <div id="result">현재 방문자 수: </div>
     
     <script>
-        function ajax(url, callback){
+        function ajax(url, callback) {
             var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange =callback;
-            xhr.open("GET",url, true);
+            xhr.onreadystatechange = callback;
+            xhr.open("GET", url, true);
             xhr.send();
         }
         
         var url = "http://localhost:3000/counter";
-        ajax(url, function(){
-           if(this.readyState == 4 && this.state == 200) {
-               var response = JSON.parse(this.responseText);
-               console.log(response);
-               
-               var result = document.querySelector('#result');
-               result.innerHTML = "현재 방문자 수 : " + response.cnt;
-           }
+        ajax(url, function() {
+            if(this.readyState==4 && this.status==200) {
+                var response = JSON.parse(this.responseText);
+                console.log(response);
+                
+                var result = document.querySelector('#result');
+                result.innerHTML = "현재 방문자 수: " + response.cnt;
+            }
         });
     </script>
 </body>
