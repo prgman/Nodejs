@@ -1,3 +1,7 @@
+//node에서 소스 자동 갱신 npm install -g nodemon 설치후에는 nodemon xx.js하면 된다. 
+//express설치 새로운폴더로 했을 경우에도 다시 설치한다. npm i -S express
+//새로운 폴더 생성후 최초 작업은 npm init -y로 json파일을 생성한다. 
+
 const http = require('http');
 const express = require('express');
 const app = express();
