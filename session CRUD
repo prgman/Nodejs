@@ -1,0 +1,123 @@
+/// product.ejs
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>/views/product.ejs</title>
+</head>
+<body>
+    <h1>상품정보 페이지</h1>
+    
+    <hr>
+    
+    <%
+    for(var car of carList){
+    %>
+        <p><%=car.name%>|<%=car.price%>|<%=car.company%>|<%=car.year%></p>
+    
+    <%    
+    }
+    %>
+    
+    <hr>
+    <p><a href="/process/logout">로그아웃</a></p>
+    
+</body>
+</html>
+
+
+
+
+
+
+////////////
+const http = require('http');
+const express = require('express');
+const bodyParser = require('body-parser');
+const expressSession = require('express-session');
+const cookieParser = require('cookie-parser');
+const static = require('serve-static');
+
+const app = express();
+const router = express.Router();
+//npm i cookie-parser --save
+
+app.set('port',3000);
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views')
+
+app.use('/public', static(__dirname + "/public"));
+
+
+app.use(expressSession({
+    secret: 'my key',
+    resave: true,
+    saveUninitialized: true
+}));
+
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
+
+let carList = [
+    {name:'Sonata', price:'2800', company:'Hyundai', year:2018},
+    {name:'Sonata1', price:'2900', company:'Hyundai', year:2019},
+    {name:'Sonata2', price:'2890', company:'Hyundai', year:2017},
+    {name:'Sonata3', price:'2810', company:'Hyundai', year:2016},
+]
+    
+router.route('/process/product').get(function(req, res){
+    if(req.session.user){
+        req.app.render('product',{carList: carList}, function(err, html){
+        if(err) throw err;
+        res.end(html);
+        });
+    }else{
+        res.writeHead(200,{'Content-Type':'text/html;charset=utf8'});
+        res.write("<script>alert('로그인 전이라서 로그인 페이지로 이동합니다.');");
+        res.write("location.href='/public/login.html';</script>");
+        res.end();
+        //console.log('로그인 전입니다!');
+        //res.redirect('/public/login.html')
+    }
+    //res.end('/process/product 페이지 요청');
+});
+
+router.route('/process/login').post(function(req, res){
+    let id = req.body.id;
+    let password = req.body.password;
+    // session에 user 정보 등록
+    req.session.user = {
+        id:id,
+        name:'소녀시대',
+        authorized: true
+    } 
+    res.redirect('/process/product');
+    //res.end('/process/login 페이지 요청: ' + id + ' : ' + password);
+});
+
+router.route('/process/logout').get(function(req, res){
+    if(req.session.user){
+        req.session.destroy(function(err){
+            if(err){
+                throw err;
+            }else{
+                console.log('세션을 비웠습니다.');
+                res.redirect('/public/login.html');
+            }
+        });
+    }else{
+        console.log('로그인 전입니다!');
+        res.redirect('/public/login.html')
+    }
+    //res.end('/process/logout 페이지 요청');
+});
+
+//route 미들웨어 등록
+app.use('/',router);
+
+const server = http.createServer(app);
+server.listen(app.get('port'),function(){
+   console.log('http://localhost:%d', app.get('port'));
+});
