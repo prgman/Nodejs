@@ -1,5 +1,5 @@
 //방문자 수 counter. 서버에 방문자수를 채워주는 
-
+// 이것을 이용해서 채팅, 야구, 가위바위보, 오목 등 여러가지를 만들수 있다. 
 // 방문자 수 카운터
 const http = require('http');
 const express = require('express');
