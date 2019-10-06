@@ -1,61 +1,57 @@
 //방문자 수 counter. 서버에 방문자수를 채워주는 
 
+// 방문자 수 카운터
 const http = require('http');
 const express = require('express');
-const static = require('serve-static');
-const cors = require('cors');
-
 const app = express();
-const router = express.Router(); // router 미들웨어는 맨 아래에서.
 
-//process.env.PORT!=undefined ? process.env.PORT :3000
-app.set('port',process.env.PORT || 3000);
+const router = express.Router(); // router 미들웨어는 맨 아래에서
+const static = require('serve-static');
 
-app.use('/public', static(__dirname+'/public'));
-app.use(cors());
+app.set('port', process.env.PORT || 3000);
 
-let cnt =0;
+app.use('/public', static(__dirname + '/public'));
 
-function counter(){
+let cnt = 0;
+
+function counter() {
     cnt++;
 }
 
-//app.get('/', function(req,res){});
-router.route('/counter').get(function(req,res){
-    console.log('/ 요청 됨');
+//app.get('/', function(req, res) {});
+router.route('/counter').get(function (req, res) {
+    //console.log('/ 요청 됨');
     counter();
     var response = {
-        cnt:cnt,
-        date:new Date()
+        cnt: cnt,
+        date: new Date()
     };
-    //res.writeHead(200, {'Content-Type':'text/html;charset=utf8'});
-//    res.send({cnt:cnt, date:new Date()});
+    //res.send({cnt:cnt, date:new Date()});
     res.end(JSON.stringify(response));
 });
 
-router.route('/check').get(function(req,res){
-    console.log('check 요청됨.');
+router.route('/check').get(function(req, res) {
+    //console.log('check 요청 됨');
     var size = Number(req.query.size);
-    
-    if(size < cnt){
+    if(size < cnt) {
         var response = {
-            cnt:cnt,
-            date:new Date()
+            cnt: cnt,
+            date: new Date()
         };
         res.end(JSON.stringify(response));
-    }else{
+    } else {
         res.end();
     }
 });
 
-app.use('/',router);
+app.use('/', router);
 const server = http.createServer(app);
-server.listen(app.get('port'), function(){
-   console.log(`http://localhost:${app.get('port')}`);
+server.listen(app.get('port'), function () {
+    console.log(`http://localhost:${app.get('port')}`);
 });
 
 
-//////////counter_v2.html
+////counter_v2.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
