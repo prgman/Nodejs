@@ -1,0 +1,98 @@
+// public/calc.html 기본문서.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>/public/calc.html</title>
+</head>
+<body>
+    <input type="text" name="a">
+    <input type="text" name="b">
+    <select name="op">
+        <option value="plus">plus</option>
+        <option value="minus">minus</option>
+        <option value="mult">mult</option>
+        <option value="div">div</option>
+    </select>
+    <input type="submit" value="확인">
+    <hr>
+    <div>결과: </div>
+</body>
+</html>
+
+
+// 전체를 form에 넣고 ajax 만듬. 
+//Access to XMLHttpRequest at 'http://localhost:3000/plus/3/8' from origin 'http://127.0.0.1:53932' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+//기본적으로 요청온다고 무조건 응답해주지 않는다. 그것이 크로스 도메인이다. ip주소가 같아도 포트가 다르면 응신은 하지만 결과는 보내주지 않는다.
+//크로스 도메인: 보안상의 이유로 웹서버의 서로다른 도메인 경로에서 데이터를 주고 받을수 없도록 규제함. 
+//미들웨어를 설치를 해서 서버에 넣어주면 해결할수 있다. npm install cors --save.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>/public/calc.html</title>
+</head>
+<body>
+   <form>
+    <input type="text" name="a">
+    <input type="text" name="b">
+    <select name="op">
+        <option value="plus">plus</option>
+        <option value="minus">minus</option>
+        <option value="mult">mult</option>
+        <option value="div">div</option>
+    </select>
+    <input type="submit" value="확인">
+    </form>
+    <hr>
+    <div id="result">결과: </div>
+    
+    <script>
+        function calcAjax(url, callback){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = callback; // 결과처리
+            xhr.open("GET", url, true); //경로지정 - method, url, Async
+            xhr.send(); //실행
+        }
+        var form = document.forms[0];
+        form.onsubmit = function(){
+            event.preventDefault(); //멈춰주는것.
+            var a = this.a.value;
+            var b = this.b.value;
+            var op = this.op.value;
+            var url = "http://localhost:3000/"+op+"/"+a+"/"+b;
+            
+            calcAjax(url, function(){
+                if(this.readyState==4 && this.status==200){
+                    var data = this.responseText;
+                    var result = document.getElementById("result");
+                    result.innerHTML = "결과 : " + data;
+                }
+            });
+        };
+        
+    </script>
+</body>
+</html>
+
+
+
+/////////////////////서버부분.
+var http = require('http');
+var express = require('express');
+var app = express();
+// npm install --save body-parset
+var bodyParser = require('body-parser');
+var static = require('serve-static');
+var cors = require('cors');
+
+app.set('port', process.env.PORT || 3000);
+
+app.use(cors()); // cors 미들웨어 등록
+
+app.get()
+var server = http.createServer(app);
+server.listen(app.get('port'), function(){
+    console.log('웹서버가 시작되었습니다. %d', app.get('port'));
+});
