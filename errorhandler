@@ -1,0 +1,49 @@
+// 오류모듈 미들웨어 사용
+// npm install express-error-handler --save
+const http = require('http');
+const express = require('express');
+const app = express();
+
+const router = express.Router(); // router 미들웨어는 맨 아래에서
+const static = require('serve-static');
+
+app.set('port', process.env.PORT || 3000);
+
+app.use('/public', static(__dirname + '/public'));
+
+router.route('/main').get(function(req,res){
+    console.log('/main 요청 들어 옴...');
+    
+    res.end('GET - /main');
+});
+
+app.use('/', router);
+
+//오류처리 모듈
+const expressErrorHandler = require('express-error-handler');
+let errorHandler = expressErrorHandler({
+   static :{
+       '404' : './public/404.html'
+   } 
+});
+
+app.use(expressErrorHandler.httpError(404));
+app.use(errorHandler);
+
+const server = http.createServer(app);
+server.listen(app.get('port'), function () {
+    console.log(`http://localhost:${app.get('port')}`);
+});
+
+////////////////404.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>/public/404.html</title>
+</head>
+<body>
+    <h1>페이지를 찾을수 없습니다.</h1>
+    <h3>Express error handler message!</h3>
+</body>
+</html>
