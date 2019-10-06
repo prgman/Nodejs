@@ -1,0 +1,79 @@
+//npm install -S serve-static
+//body-paerser 설치  npm install -S body-parser
+//post는 body-parser 필요.
+//public폴더 아래에 login.html생성.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>/public/login.html</title>
+</head>
+<body>
+    <h2>로그인 페이지</h2>
+    <form action="/process/login" method="post">
+        아이디: <input type="text" name="id" value="Hong"><br>
+        비밀번호: <input type="text" name="password" value="12345"><br>
+        <input type="submit" value="login">
+    </form>
+</body>
+</html>
+
+
+
+
+
+//////////////////////
+
+var http = require('http');
+var express = require('express');
+var app = express();
+// npm install --save body-parset
+var bodyParser = require('body-parser');
+var static = require('serve-static');
+
+app.set('port', process.env.PORT || 3000);
+// 미들웨어 등록. app에 body속성을 추가.
+app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
+//post를 보내려면 form이 있어야 하므로 form은 폴더가 있어야 한다. 
+app.use('/public', static(__dirname+'/public'));// 절대경로
+
+// method가 post일때 요청 처리됨.
+app.get('/process/login', function(req,res){
+   console.log('/process/login 요청됨.') ;
+    
+    var id = req.body.id;
+    var password = req.body.password;
+
+    console.log("id : ", id);
+    console.log("password : ", password);
+    
+    res.writeHead(200, {'Content-Type':'text/html;charset=utf8'});
+    res.write("<h1>hello</h1>");
+    res.end();
+});
+
+var server = http.createServer(app);
+server.listen(app.get('port'), function(){
+    console.log('웹서버가 시작되었습니다. %d', app.get('port'));
+});
+
+///json file에서 설치된 모듈들 확인 가능. 
+
+{
+  "name": "sunday02",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "serve-static": "^1.14.1"
+  }
+}
