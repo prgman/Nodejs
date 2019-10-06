@@ -1,0 +1,37 @@
+const http = require('http');
+const express = require('express');
+const app = express();
+
+app.set('port', process.env.PORT ||3000);
+
+app.use(function(req,res,next){
+    console.log("첫번째 미들웨어 실행!");
+    res.writeHead(200, {'Content-Type':'text/html;charset=utf8'});
+    res.write('<h2>first middleware</h2>');
+    //res.end();
+    next(); //다음 미들웨어 호출
+});
+
+app.use(function(req,res,next){
+    console.log("두번째 미들웨어 실행!");
+    res.write('<h2>second middleware</h2>');
+    //res.end(); //res.end후에는 또 write할수 없다. 
+    next();
+});
+
+app.get('/profile', function(req,res){
+    console.log('/profile 요청됨.');
+    res.write('<h2>Hello World</h2>');
+    res.end();
+});
+
+app.get('/gallery', function(req,res){
+    console.log('/gallery 요청됨.');
+    res.write('<h2>Hello gallery</h2>');
+    res.end();
+});
+
+const server = http.createServer(app);
+server.listen(app.get('port'), function(){
+    console.log('http://localhost:%d', app.get('port'));
+});
