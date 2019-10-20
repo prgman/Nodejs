@@ -1,0 +1,99 @@
+///////////index.js
+const functions = require('firebase-functions');
+const firebase = require('firebase-admin');
+const express = require('express');
+const engines = require('consolidate');
+const ejs = require('ejs');
+const fs = require('fs');
+const router = express.Router();
+const app = express();
+const path = require('path');
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+let carList = [
+    {name:'Sonata', price:3200,company:'Hyundai', year: 2018},
+    {name:'BMW', price:4200,company:'BMW', year: 2016}
+    
+];
+
+router.route('/car').get(function(req,res){
+    console.log('/car 요청 됨');
+    
+    req.app.render('car_list', {cars : carList}, function(err,html){
+        if(err) throw err;
+        res.end(html);
+    });
+});
+
+app.use('/',router);
+exports.app = functions.https.onRequest(app);
+
+
+
+///////////////car_list.ejs
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<%
+    //var cars = [{name:'SM5',price:3000,year:1999,company:'SAMSUNG'},{name:'SM7',price:5000,year:2013,company:'SAMSUNG'}]
+%>
+   <h1>자동차 목록</h1>
+   <table border="1" width="80%">
+<%
+    for(var i in cars) {
+%>
+        <tr>
+            <td><%=cars[i].name%></td>
+            <td><%=cars[i].price%></td>
+            <td><%=cars[i].year%></td>
+            <td><%=cars[i].company%></td>
+        </tr>
+
+<%
+    }
+%>
+    </table>
+</body>
+</html>
+
+
+
+///////////////firebase.json.
+{
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": {
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run lint"
+    ],
+    "source": "functions"
+  },
+  "hosting": {
+    "public": "public",
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "app"
+      }
+    ],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  },
+  "storage": {
+    "rules": "storage"
+  }
+}
