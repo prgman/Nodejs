@@ -1,0 +1,102 @@
+////// chat_client.html
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat_Client.html</title>
+    <style>
+        div#box {
+            width : 300px;
+            height: 300px;
+            border: 1px solid red;
+            overflow: scroll;
+        }
+        div#box span {
+            display: block;
+            text-align: center;
+        }
+        form fieldset{
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ajax와 Nodejs를 이용한 채팅 기능 구현</h1>
+    <h3>chatting program은 보통 socketio를 사용하지만 원리를 알기위해 만드는 예제.</h3>
+    <form action="">
+        <div id="box"><span>--- 입장하였습니다. ---</span></div>
+        <fieldset>
+            <legend>메신저</legend>
+            사용자 : <input type="text" name="sender"> <br>
+            메세지 : <input type="text" name="message"> 
+            <input type="submit" value="전송">
+        </fieldset>
+    </form>
+        <script src="http://code.jquery.com/jquery.js"></script>           
+        <script>
+            var url = "http://localhost:3000/";
+            var size = 0;
+            var xhr = new XMLHttpRequest();
+            
+            // submit 버튼을 누르면 서버로 메세지를 전송한다. 
+            $('form').submit(function(){
+                event.preventDefault();
+//                var sender = $(':input[name=sender]').val();
+                var sender = this.sender.value;
+                var message = this.message.value;
+                var dataUrl = url+"send?sender="+sender+"&message="+message;
+                xhr.onreadystatechange = function(){}
+                xhr.open("GET", dataUrl, true);
+                xhr.send();
+            })
+        </script>
+
+</body>
+</html>
+
+
+
+///////////////////chat_server.js
+// 방문자 수 카운터
+const http = require('http');
+const express = require('express');
+const path = require('path');
+const cors = require('cors');
+const static = require('serve-static');
+const app = express();
+
+const router = express.Router(); // router 미들웨어는 맨 아래에서
+
+app.set('port', process.env.PORT || 3000);
+app.use(cors());
+app.use('/public', static(path.join(__dirname + '/public')));
+
+//app.get('/', function(req, res) {});
+router.route('/send').get(function (req, res) {
+    var sender = req.query.sender;
+    var message = req.query.message;
+    console.log(sender,message);
+    //res.send({cnt:cnt, date:new Date()});
+    res.end('GET - /send ok');
+});
+
+//router.route('/check').get(function(req, res) {
+//    //console.log('check 요청 됨');
+//    var size = Number(req.query.size);
+//    if(size < cnt) {
+//        var response = {
+//            cnt: cnt,
+//            date: new Date()
+//        };
+//        res.end(JSON.stringify(response));
+//    } else {
+//        res.end();
+//    }
+//});
+
+app.use('/', router);
+
+const server = http.createServer(app);
+server.listen(app.get('port'), function () {
+    console.log(`http://localhost:${app.get('port')}`);
+});
