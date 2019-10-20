@@ -20,7 +20,7 @@ let carList = [
 
 router.route('/car').get(function(req,res){
     console.log('/car 요청 됨');
-    
+     //위에 view engine설정해두었기때문에 render 가능.
     req.app.render('car_list', {cars : carList}, function(err,html){
         if(err) throw err;
         res.end(html);
