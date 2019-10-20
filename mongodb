@@ -1,0 +1,101 @@
+https://mongodb.com > server > download
+환경변수 잡아주기 > program files\mongodb\server\4.2\bin
+cmd>mongo, >db (test), use local; (>)//local로 db변경됨.
+db.getCollectionNames();
+[ "startup_log" ]
+> db.users.insert({name:'방탄소년단', age:21});
+WriteResult({ "nInserted" : 1 })
+> db.users.find();
+{ "_id" : ObjectId("5dabd1826d21ceb34ee4e505"), "name" : "방탄소년단", "age" : 21 }
+> db.users.find().pretty();
+{
+        "_id" : ObjectId("5dabd1826d21ceb34ee4e505"),
+        "name" : "방탄소년단",
+        "age" : 21
+}
+> use vehicle
+switched to db vehicle
+> db
+vehicle
+> db.car.save({name:'SM5', price:1000,company:'SAMSUNG',year:2013});
+WriteResult({ "nInserted" : 1 })
+> db.car.save({name:'Sonata', price:2000,company:'HYUNDAI',year:2012});
+WriteResult({ "nInserted" : 1 })
+> db.car.save({name:'BMW', price:3000,company:'BMW',year:2014});
+WriteResult({ "nInserted" : 1 })
+> db.car.save({name:'K7', price:4000,company:'KIA',year:2015});
+WriteResult({ "nInserted" : 1 })
+> db
+vehicle
+> db.car.find().pretty();
+{
+        "_id" : ObjectId("5dabd1f66d21ceb34ee4e506"),
+        "name" : "SM5",
+        "price" : 1000,
+        "company" : "SAMSUNG",
+        "year" : 2013
+}
+{
+        "_id" : ObjectId("5dabd20c6d21ceb34ee4e507"),
+        "name" : "Sonata",
+        "price" : 2000,
+        "company" : "HYUNDAI",
+        "year" : 2012
+}
+{
+        "_id" : ObjectId("5dabd2256d21ceb34ee4e508"),
+        "name" : "BMW",
+        "price" : 3000,
+        "company" : "BMW",
+        "year" : 2014
+}
+{
+        "_id" : ObjectId("5dabd2366d21ceb34ee4e509"),
+        "name" : "K7",
+        "price" : 4000,
+        "company" : "KIA",
+        "year" : 2015
+}
+> db.car.find();
+{ "_id" : ObjectId("5dabd1f66d21ceb34ee4e506"), "name" : "SM5", "price" : 1000, "company" : "SAMSUNG", "year" : 2013 }
+{ "_id" : ObjectId("5dabd20c6d21ceb34ee4e507"), "name" : "Sonata", "price" : 2000, "company" : "HYUNDAI", "year" : 2012 }
+{ "_id" : ObjectId("5dabd2256d21ceb34ee4e508"), "name" : "BMW", "price" : 3000, "company" : "BMW", "year" : 2014 }
+{ "_id" : ObjectId("5dabd2366d21ceb34ee4e509"), "name" : "K7", "price" : 4000, "company" : "KIA", "year" : 2015 }
+> db.car.find({name:'K7'});
+{ "_id" : ObjectId("5dabd2366d21ceb34ee4e509"), "name" : "K7", "price" : 4000, "company" : "KIA", "year" : 2015 }
+> db.car.find({name:'K7'},{_id:false});
+{ "name" : "K7", "price" : 4000, "company" : "KIA", "year" : 2015 }
+> db.car.find({price:{$gte:2000}},{_id:false});
+{ "name" : "Sonata", "price" : 2000, "company" : "HYUNDAI", "year" : 2012 }
+{ "name" : "BMW", "price" : 3000, "company" : "BMW", "year" : 2014 }
+{ "name" : "K7", "price" : 4000, "company" : "KIA", "year" : 2015 }
+> db.car.find({price:{$gt:2000}},{_id:false});
+{ "name" : "BMW", "price" : 3000, "company" : "BMW", "year" : 2014 }
+{ "name" : "K7", "price" : 4000, "company" : "KIA", "year" : 2015 }
+> db.car.find({price:{$lte:2000}},{_id:false});
+{ "name" : "SM5", "price" : 1000, "company" : "SAMSUNG", "year" : 2013 }
+{ "name" : "Sonata", "price" : 2000, "company" : "HYUNDAI", "year" : 2012 }
+> db.car.find({price:{$lt:2000}},{_id:false});
+{ "name" : "SM5", "price" : 1000, "company" : "SAMSUNG", "year" : 2013 }
+> db.car.find({price:{$gte:2000}},{_id:false}).count();
+3
+> db.car.findOne();
+{
+        "_id" : ObjectId("5dabd1f66d21ceb34ee4e506"),
+        "name" : "SM5",
+        "price" : 1000,
+        "company" : "SAMSUNG",
+        "year" : 2013
+}
+> db.car.find().sort({name:1});
+{ "_id" : ObjectId("5dabd2256d21ceb34ee4e508"), "name" : "BMW", "price" : 3000, "company" : "BMW", "year" : 2014 }
+{ "_id" : ObjectId("5dabd2366d21ceb34ee4e509"), "name" : "K7", "price" : 4000, "company" : "KIA", "year" : 2015 }
+{ "_id" : ObjectId("5dabd1f66d21ceb34ee4e506"), "name" : "SM5", "price" : 1000, "company" : "SAMSUNG", "year" : 2013 }
+{ "_id" : ObjectId("5dabd20c6d21ceb34ee4e507"), "name" : "Sonata", "price" : 2000, "company" : "HYUNDAI", "year" : 2012 }
+>
+> db.car.find().sort({name:-1});
+{ "_id" : ObjectId("5dabd20c6d21ceb34ee4e507"), "name" : "Sonata", "price" : 2000, "company" : "HYUNDAI", "year" : 2012 }
+{ "_id" : ObjectId("5dabd1f66d21ceb34ee4e506"), "name" : "SM5", "price" : 1000, "company" : "SAMSUNG", "year" : 2013 }
+{ "_id" : ObjectId("5dabd2366d21ceb34ee4e509"), "name" : "K7", "price" : 4000, "company" : "KIA", "year" : 2015 }
+{ "_id" : ObjectId("5dabd2256d21ceb34ee4e508"), "name" : "BMW", "price" : 3000, "company" : "BMW", "year" : 2014 }
+>
